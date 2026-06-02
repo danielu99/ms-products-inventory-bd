@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ms-products-inventory-bd
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
