@@ -19,6 +19,7 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false,unique = true)
     private String sku;
 
     @Column(nullable = false)
@@ -26,9 +27,6 @@ public class ProductEntity {
 
     @Column(nullable = false, precision = 12, scale = 2)
     private BigDecimal costoPromedio;
-
-    @Column(nullable = false)
-    private Boolean facturable;
 
     @Column(nullable = false, precision = 5, scale = 2)
     private BigDecimal margenDeseado;
@@ -39,6 +37,6 @@ public class ProductEntity {
     @Column(nullable = false)
     private Integer stockActual;
 
-    @Column(nullable = false)
+    @Column(nullable = false,updatable = false)
     private LocalDateTime fechaCreacion;
 }

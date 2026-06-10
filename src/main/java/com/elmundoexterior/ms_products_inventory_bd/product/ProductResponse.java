@@ -10,8 +10,6 @@ public record ProductResponse(
 
         String nombre,
 
-        Boolean facturable,
-
         BigDecimal margenDeseado,
 
         BigDecimal precioFinal,

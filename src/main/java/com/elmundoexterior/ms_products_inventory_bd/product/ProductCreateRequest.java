@@ -14,9 +14,6 @@ public record ProductCreateRequest(
         String nombre,
 
         @NotNull
-        Boolean facturable,
-
-        @NotNull
         @PositiveOrZero
         BigDecimal margenDeseado,
 

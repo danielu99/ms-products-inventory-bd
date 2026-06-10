@@ -17,7 +17,6 @@ public class ProductService {
                 ProductEntity.builder()
                         .sku(request.sku())
                         .nombre(request.nombre())
-                        .facturable(request.facturable())
                         .margenDeseado(request.margenDeseado())
                         .precioFinal(request.precioFinal())
                         .costoPromedio(java.math.BigDecimal.ZERO)
@@ -56,7 +55,6 @@ public class ProductService {
                 entity.getId(),
                 entity.getSku(),
                 entity.getNombre(),
-                entity.getFacturable(),
                 entity.getMargenDeseado(),
                 entity.getPrecioFinal(),
                 entity.getCostoPromedio(),
