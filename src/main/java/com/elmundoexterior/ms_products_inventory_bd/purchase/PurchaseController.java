@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/purchases")
 @RequiredArgsConstructor
@@ -17,5 +19,18 @@ public class PurchaseController {
             @RequestBody PurchaseCreateRequest request) {
 
         return service.create(request);
+    }
+
+    @GetMapping
+    public List<PurchaseResponse> getAll() {
+
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public PurchaseResponse getById(
+            @PathVariable Long id) {
+
+        return service.getById(id);
     }
 }

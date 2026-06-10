@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -112,5 +113,41 @@ public class PurchaseService {
         product.setStockActual(nuevoStock);
 
         product.setCostoPromedio(nuevoCostoPromedio);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PurchaseResponse> getAll() {
+
+        return purchaseRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PurchaseResponse getById(
+            Long id) {
+
+        PurchaseEntity purchase =
+                purchaseRepository.findById(id)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Compra no encontrada"));
+
+        return toResponse(purchase);
+    }
+
+    private PurchaseResponse toResponse(
+            PurchaseEntity purchase) {
+
+        return new PurchaseResponse(
+                purchase.getId(),
+                purchase.getProducto().getId(),
+                purchase.getCantidad(),
+                purchase.getCostoUnitario(),
+                purchase.getFacturada(),
+                purchase.getCostoReal(),
+                purchase.getFecha()
+        );
     }
 }
