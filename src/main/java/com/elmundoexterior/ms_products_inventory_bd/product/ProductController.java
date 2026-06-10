@@ -1,5 +1,7 @@
 package com.elmundoexterior.ms_products_inventory_bd.product;
 
+import com.elmundoexterior.ms_products_inventory_bd.product.dto.UpdateMarginRequest;
+import com.elmundoexterior.ms_products_inventory_bd.product.dto.UpdatePriceRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,5 +35,23 @@ public class ProductController {
             @PathVariable Long id) {
 
         return service.findById(id);
+    }
+
+    @PatchMapping("/{id}/price")
+    public ProductResponse updatePrice(
+            @PathVariable Long id,
+            @RequestBody UpdatePriceRequest request) {
+
+        return service
+                .updatePrice(id, request);
+    }
+
+    @PatchMapping("/{id}/margin")
+    public ProductResponse updateMargin(
+            @PathVariable Long id,
+            @RequestBody UpdateMarginRequest request) {
+
+        return service
+                .updateMargin(id, request);
     }
 }

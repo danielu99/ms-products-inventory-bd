@@ -32,4 +32,13 @@ public interface ProductRepository
         """,
             nativeQuery = true)
     List<Object[]> getMarginReport();
+
+    @Query(value = """
+        SELECT
+            COUNT(*),
+            COALESCE(SUM(stock_actual),0)
+        FROM producto
+        """,
+            nativeQuery = true)
+    List<Object[]> getInventorySummary();
 }
