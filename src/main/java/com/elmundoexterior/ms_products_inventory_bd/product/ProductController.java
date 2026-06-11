@@ -21,7 +21,7 @@ public class ProductController {
     public ProductResponse create(
             @Valid @RequestBody ProductCreateRequest request) {
 
-        return service.create(request);
+        return service.createProduct(request);
     }
 
     @GetMapping

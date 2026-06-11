@@ -2,12 +2,16 @@ package com.elmundoexterior.ms_products_inventory_bd.product;
 
 import com.elmundoexterior.ms_products_inventory_bd.product.dto.UpdateMarginRequest;
 import com.elmundoexterior.ms_products_inventory_bd.product.dto.UpdatePriceRequest;
+import com.elmundoexterior.ms_products_inventory_bd.purchase.PurchaseEntity;
+import com.elmundoexterior.ms_products_inventory_bd.purchase.PurchaseRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,24 +19,48 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final PurchaseRepository purchaseRepository;
 
-    public ProductResponse create(ProductCreateRequest request) {
+    @Transactional
+    public ProductResponse createProduct(
+            ProductCreateRequest request) {
 
-        ProductEntity entity =
+        ProductEntity product =
                 ProductEntity.builder()
                         .sku(request.sku())
                         .nombre(request.nombre())
-                        .margenDeseado(request.margenDeseado())
+                        .costoPromedio(request.costoUnitario())
+                        .margenDeseado(request.margenDeseado().divide(
+                                BigDecimal.valueOf(100),
+                                2,
+                                RoundingMode.HALF_UP))
                         .precioFinal(request.precioFinal())
-                        .costoPromedio(java.math.BigDecimal.ZERO)
-                        .stockActual(0)
-                        .fechaCreacion(java.time.LocalDateTime.now())
+                        .stockActual(request.cantidadInicial())
+                        .fechaCreacion(LocalDateTime.now())
                         .build();
 
-        ProductEntity saved =
-                repository.save(entity);
+        ProductEntity savedProduct =
+                repository.save(product);
 
-        return map(saved);
+        PurchaseEntity purchase =
+                PurchaseEntity.builder()
+                        .producto(savedProduct)
+                        .cantidad(request.cantidadInicial())
+                        .costoUnitario(request.costoUnitario())
+                        .fecha(LocalDateTime.now())
+                        .facturada(request.compraFacturada())
+                        .costoReal(
+                                request.compraFacturada()
+                                        ? request.costoUnitario().divide(
+                                        BigDecimal.valueOf(1.16),
+                                        2,
+                                        RoundingMode.HALF_UP)
+                                        : request.costoUnitario()
+                        )                        .build();
+
+        purchaseRepository.save(purchase);
+
+        return map(savedProduct);
     }
 
     public List<ProductResponse> findAll() {
