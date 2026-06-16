@@ -3,6 +3,7 @@ package com.elmundoexterior.ms_products_inventory_bd.purchase;
 import com.elmundoexterior.ms_products_inventory_bd.product.ProductEntity;
 import com.elmundoexterior.ms_products_inventory_bd.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +24,24 @@ public class PurchaseService {
     public PurchaseResponse create(
             PurchaseCreateRequest request) {
 
+        if (request.cantidad() <= 0) {
+
+            throw new RuntimeException(
+                    "La cantidad debe ser mayor a cero");
+        }
+
+        if (request.costoUnitario()
+                .compareTo(BigDecimal.ZERO) <= 0) {
+
+            throw new RuntimeException(
+                    "El costo debe ser mayor a cero");
+        }
+
         ProductEntity product =
                 productRepository.findById(request.productId())
                         .orElseThrow(() ->
-                                new RuntimeException("Producto no encontrado"));
+                                new RuntimeException(
+                                        "Producto no encontrado"));
 
         BigDecimal costoReal =
                 request.facturada()
@@ -79,14 +94,14 @@ public class PurchaseService {
         BigDecimal costoPromedioAnterior =
                 product.getCostoPromedio();
 
-        /*
-         * Primera compra del producto
-         */
-        if (stockAnterior == null || stockAnterior == 0) {
+        if (stockAnterior == null
+                || stockAnterior == 0) {
 
-            product.setStockActual(cantidadNueva);
+            product.setStockActual(
+                    cantidadNueva);
 
-            product.setCostoPromedio(costoRealNuevo);
+            product.setCostoPromedio(
+                    costoRealNuevo);
 
             return;
         }
@@ -96,29 +111,37 @@ public class PurchaseService {
 
         BigDecimal valorInventarioAnterior =
                 costoPromedioAnterior.multiply(
-                        BigDecimal.valueOf(stockAnterior));
+                        BigDecimal.valueOf(
+                                stockAnterior));
 
         BigDecimal valorCompraNueva =
                 costoRealNuevo.multiply(
-                        BigDecimal.valueOf(cantidadNueva));
+                        BigDecimal.valueOf(
+                                cantidadNueva));
 
         BigDecimal nuevoCostoPromedio =
                 valorInventarioAnterior
                         .add(valorCompraNueva)
                         .divide(
-                                BigDecimal.valueOf(nuevoStock),
+                                BigDecimal.valueOf(
+                                        nuevoStock),
                                 2,
                                 RoundingMode.HALF_UP);
 
-        product.setStockActual(nuevoStock);
+        product.setStockActual(
+                nuevoStock);
 
-        product.setCostoPromedio(nuevoCostoPromedio);
+        product.setCostoPromedio(
+                nuevoCostoPromedio);
     }
 
     @Transactional(readOnly = true)
     public List<PurchaseResponse> getAll() {
 
-        return purchaseRepository.findAll()
+        return purchaseRepository.findAll(
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "fecha"))
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -150,4 +173,5 @@ public class PurchaseService {
                 purchase.getFecha()
         );
     }
+
 }

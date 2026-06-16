@@ -25,11 +25,19 @@ public class ProductService {
     public ProductResponse createProduct(
             ProductCreateRequest request) {
 
+        BigDecimal costoReal =
+                request.compraFacturada()
+                        ? request.costoUnitario().divide(
+                        BigDecimal.valueOf(1.16),
+                        2,
+                        RoundingMode.HALF_UP)
+                        : request.costoUnitario();
+
         ProductEntity product =
                 ProductEntity.builder()
                         .sku(request.sku())
                         .nombre(request.nombre())
-                        .costoPromedio(request.costoUnitario())
+                        .costoPromedio(costoReal)
                         .margenDeseado(request.margenDeseado().divide(
                                 BigDecimal.valueOf(100),
                                 2,
@@ -49,14 +57,8 @@ public class ProductService {
                         .costoUnitario(request.costoUnitario())
                         .fecha(LocalDateTime.now())
                         .facturada(request.compraFacturada())
-                        .costoReal(
-                                request.compraFacturada()
-                                        ? request.costoUnitario().divide(
-                                        BigDecimal.valueOf(1.16),
-                                        2,
-                                        RoundingMode.HALF_UP)
-                                        : request.costoUnitario()
-                        )                        .build();
+                        .costoReal(costoReal)
+                        .build();
 
         purchaseRepository.save(purchase);
 
