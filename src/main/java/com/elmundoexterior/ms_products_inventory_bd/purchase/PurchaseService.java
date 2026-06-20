@@ -74,6 +74,7 @@ public class PurchaseService {
 
         return new PurchaseResponse(
                 saved.getId(),
+                product.getNombre(),
                 product.getId(),
                 saved.getCantidad(),
                 saved.getCostoUnitario(),
@@ -165,6 +166,7 @@ public class PurchaseService {
 
         return new PurchaseResponse(
                 purchase.getId(),
+                purchase.getProducto().getNombre(),
                 purchase.getProducto().getId(),
                 purchase.getCantidad(),
                 purchase.getCostoUnitario(),

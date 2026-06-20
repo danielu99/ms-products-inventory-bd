@@ -7,6 +7,8 @@ public record PurchaseResponse(
 
         Long id,
 
+        String productName,
+
         Long productId,
 
         Integer cantidad,
