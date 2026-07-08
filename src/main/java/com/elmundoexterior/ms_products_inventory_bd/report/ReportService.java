@@ -13,6 +13,9 @@ import com.elmundoexterior.ms_products_inventory_bd.report.topproducts.TopProduc
 import com.elmundoexterior.ms_products_inventory_bd.sale.SaleDetailRepository;
 import com.elmundoexterior.ms_products_inventory_bd.sale.SaleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -118,6 +121,52 @@ public class ReportService {
                 .stream()
                 .map(this::mapPendingInvoiceSale)
                 .toList();
+    }
+
+    public ResponseEntity<byte[]> exportPendingInvoiceSalesCsv(
+            Integer year,
+            Integer month) {
+
+        List<PendingInvoiceSaleDto> sales =
+                getPendingInvoiceSales(
+                        year,
+                        month);
+
+        StringBuilder csv =
+                new StringBuilder();
+
+        csv.append(
+                "Venta ID,Fecha,Canal,Metodo Pago,Subtotal,IVA,Total\n");
+
+        for (PendingInvoiceSaleDto sale : sales) {
+
+            csv.append(sale.ventaId())
+                    .append(",")
+                    .append(sale.fecha())
+                    .append(",")
+                    .append(sale.canalVenta())
+                    .append(",")
+                    .append(sale.metodoPago())
+                    .append(",")
+                    .append(sale.subtotal())
+                    .append(",")
+                    .append(sale.iva())
+                    .append(",")
+                    .append(sale.total())
+                    .append("\n");
+        }
+
+        byte[] bytes =
+                csv.toString().getBytes();
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=ventas_pendientes.csv")
+                .contentType(
+                        MediaType.parseMediaType(
+                                "text/csv"))
+                .body(bytes);
     }
 
     public PendingInvoiceSummaryDto getPendingInvoiceSummary(

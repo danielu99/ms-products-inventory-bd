@@ -10,6 +10,7 @@ import com.elmundoexterior.ms_products_inventory_bd.report.revenue.TopRevenuePro
 import com.elmundoexterior.ms_products_inventory_bd.report.sales.SalesSummaryDto;
 import com.elmundoexterior.ms_products_inventory_bd.report.topproducts.TopProductDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,5 +83,16 @@ public class ReportController {
 
         return reportService
                 .getPendingInvoiceSummary(year, month);
+    }
+
+    @GetMapping("/pending-invoice-sales/csv")
+    public ResponseEntity<byte[]> exportPendingInvoiceSalesCsv(
+            @RequestParam Integer year,
+            @RequestParam Integer month) {
+
+        return reportService
+                .exportPendingInvoiceSalesCsv(
+                        year,
+                        month);
     }
 }
