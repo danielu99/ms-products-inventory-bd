@@ -32,4 +32,11 @@ public class SaleController {
 
         return saleService.getById(id);
     }
+
+    @GetMapping("/{id}/details")
+    public List<SaleDetailResponse> getDetails(
+            @PathVariable Long id) {
+        return saleService
+                .getDetails(id);
+    }
 }

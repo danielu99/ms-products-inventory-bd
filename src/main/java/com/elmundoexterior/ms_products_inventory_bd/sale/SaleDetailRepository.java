@@ -81,4 +81,13 @@ public interface SaleDetailRepository
         """,
             nativeQuery = true)
     List<Object[]> getProfitabilityReport();
+
+    @Query("""
+    SELECT sd
+    FROM SaleDetailEntity sd
+    JOIN FETCH sd.producto
+    WHERE sd.venta.id = :saleId
+    """)
+    List<SaleDetailEntity> findBySaleId(
+            Long saleId);
 }

@@ -148,6 +148,25 @@ public class SaleService {
         return toResponse(sale);
     }
 
+    @Transactional(readOnly = true)
+    public List<SaleDetailResponse> getDetails(
+            Long saleId) {
+
+        return saleDetailRepository
+                .findBySaleId(saleId)
+                .stream()
+                .map(detail ->
+                        new SaleDetailResponse(
+                                detail.getProducto()
+                                        .getNombre(),
+                                detail.getCantidad(),
+                                detail.getPrecioUnitario(),
+                                detail.getSubtotal()
+                        )
+                )
+                .toList();
+    }
+
     private SaleResponse toResponse(
             SaleEntity sale) {
 

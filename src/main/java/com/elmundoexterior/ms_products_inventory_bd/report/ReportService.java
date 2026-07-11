@@ -100,6 +100,16 @@ public class ReportService {
         Object[] row = saleRepository
                         .getMonthlySales(year, month).get(0);
 
+        Long facturadas =
+                row[4] == null
+                        ? 0L
+                        : ((Number) row[4]).longValue();
+
+        Long pendientes =
+                row[5] == null
+                        ? 0L
+                        : ((Number) row[5]).longValue();
+
         return new MonthlySalesDto(
                 year,
                 month,
@@ -107,8 +117,8 @@ public class ReportService {
                 (BigDecimal) row[1],
                 (BigDecimal) row[2],
                 (BigDecimal) row[3],
-                ((Number) row[4]).longValue(),
-                ((Number) row[5]).longValue()
+                facturadas,
+                pendientes
         );
     }
 
