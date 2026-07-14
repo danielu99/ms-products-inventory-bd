@@ -1,6 +1,8 @@
 package com.elmundoexterior.ms_products_inventory_bd.sale;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -96,6 +98,20 @@ public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
         """,
             nativeQuery = true)
     List<Object[]> getPendingInvoiceSummary(
+            @Param("year") Integer year,
+            @Param("month") Integer month);
+
+    @Modifying
+    @Transactional
+    @Query(value = """
+    UPDATE venta
+    SET facturada = true
+    WHERE facturada = false
+      AND EXTRACT(YEAR FROM fecha) = :year
+      AND EXTRACT(MONTH FROM fecha) = :month
+    """,
+            nativeQuery = true)
+    int markAsInvoiced(
             @Param("year") Integer year,
             @Param("month") Integer month);
 }

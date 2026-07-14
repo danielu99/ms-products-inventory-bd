@@ -95,4 +95,16 @@ public class ReportController {
                         year,
                         month);
     }
+
+    @PostMapping("/mark-invoiced")
+    public Integer markAsInvoiced(
+            @RequestParam Integer year,
+            @RequestParam Integer month) {
+
+        return reportService
+                .markAsInvoiced(
+                        year,
+                        month
+                );
+    }
 }

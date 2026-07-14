@@ -12,6 +12,7 @@ import com.elmundoexterior.ms_products_inventory_bd.report.sales.SalesSummaryDto
 import com.elmundoexterior.ms_products_inventory_bd.report.topproducts.TopProductDto;
 import com.elmundoexterior.ms_products_inventory_bd.sale.SaleDetailRepository;
 import com.elmundoexterior.ms_products_inventory_bd.sale.SaleRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -192,6 +193,18 @@ public class ReportService {
                 (BigDecimal) row[2],
                 (BigDecimal) row[3]
         );
+    }
+
+    @Transactional
+    public Integer markAsInvoiced(
+            Integer year,
+            Integer month) {
+
+        return saleRepository
+                .markAsInvoiced(
+                        year,
+                        month
+                );
     }
 
     private MarginReportDto mapMargin(
