@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import java.util.List;
 
 @RestController
@@ -38,5 +41,26 @@ public class SaleController {
             @PathVariable Long id) {
         return saleService
                 .getDetails(id);
+    }
+
+    @GetMapping("/history")
+    public List<SaleResponse> getByDateRange(
+            @RequestParam String from,
+            @RequestParam String to) {
+
+        LocalDateTime fromDate =
+                LocalDate.parse(from)
+                        .atStartOfDay();
+
+        LocalDateTime toDate =
+                LocalDate.parse(to)
+                        .atTime(
+                                23,
+                                59,
+                                59);
+
+        return saleService.getByDateRange(
+                fromDate,
+                toDate);
     }
 }

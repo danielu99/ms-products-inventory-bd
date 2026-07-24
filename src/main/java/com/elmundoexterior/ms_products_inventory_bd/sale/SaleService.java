@@ -136,6 +136,20 @@ public class SaleService {
     }
 
     @Transactional(readOnly = true)
+    public List<SaleResponse> getByDateRange(
+            LocalDateTime fromDate,
+            LocalDateTime toDate) {
+
+        return saleRepository
+                .findByDateRange(
+                        fromDate,
+                        toDate)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public SaleResponse getById(
             Long id) {
 

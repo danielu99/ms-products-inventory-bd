@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
@@ -114,4 +115,19 @@ public interface SaleRepository extends JpaRepository<SaleEntity, Long> {
     int markAsInvoiced(
             @Param("year") Integer year,
             @Param("month") Integer month);
+
+    @Query(value = """
+    SELECT *
+    FROM venta
+    WHERE fecha >= :fromDate
+      AND fecha <= :toDate
+    ORDER BY fecha DESC
+    """,
+            nativeQuery = true)
+    List<SaleEntity> findByDateRange(
+            @Param("fromDate")
+            LocalDateTime fromDate,
+
+            @Param("toDate")
+            LocalDateTime toDate);
 }
