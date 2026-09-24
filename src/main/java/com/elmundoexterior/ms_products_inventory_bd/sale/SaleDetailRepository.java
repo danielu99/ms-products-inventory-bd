@@ -3,6 +3,7 @@ package com.elmundoexterior.ms_products_inventory_bd.sale;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface SaleDetailRepository
@@ -81,6 +82,22 @@ public interface SaleDetailRepository
         """,
             nativeQuery = true)
     List<Object[]> getProfitabilityReport();
+
+    @Query(value = """
+    SELECT
+        COALESCE(
+            SUM(
+                dv.cantidad *
+                p.costo_promedio
+            ),
+            0
+        )
+    FROM detalle_venta dv
+    INNER JOIN producto p
+        ON p.id = dv.producto_id
+    """,
+            nativeQuery = true)
+    BigDecimal getTotalCostSold();
 
     @Query("""
     SELECT sd

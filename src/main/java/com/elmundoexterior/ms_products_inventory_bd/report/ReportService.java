@@ -12,6 +12,7 @@ import com.elmundoexterior.ms_products_inventory_bd.report.sales.SalesSummaryDto
 import com.elmundoexterior.ms_products_inventory_bd.report.topproducts.TopProductDto;
 import com.elmundoexterior.ms_products_inventory_bd.sale.SaleDetailRepository;
 import com.elmundoexterior.ms_products_inventory_bd.sale.SaleRepository;
+import com.elmundoexterior.ms_products_inventory_bd.sale.expense.SaleExpenseRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -29,6 +30,7 @@ public class ReportService {
     private final ProductRepository productRepository;
     private final SaleRepository saleRepository;
     private final SaleDetailRepository saleDetailRepository;
+    private final SaleExpenseRepository saleExpenseRepository;
 
     public List<MarginReportDto> getMargins() {
 
@@ -83,14 +85,38 @@ public class ReportService {
         Object[] sales = saleRepository
                         .getDashboardSalesSummary().get(0);
 
+        BigDecimal costoMercancia =
+                saleDetailRepository
+                        .getTotalCostSold();
+
+        BigDecimal gastosVenta =
+                saleExpenseRepository
+                        .getTotalExpenses();
+
+        BigDecimal utilidadReal =
+                ((BigDecimal) sales[1])
+                        .subtract(costoMercancia)
+                        .subtract(gastosVenta);
+
         return new DashboardDto(
+
                 ((Number) inventory[0]).longValue(),
+
                 ((Number) inventory[1]).intValue(),
 
                 ((Number) sales[0]).longValue(),
+
                 (BigDecimal) sales[1],
+
                 (BigDecimal) sales[2],
-                (BigDecimal) sales[3]
+
+                (BigDecimal) sales[3],
+
+                costoMercancia,
+
+                gastosVenta,
+
+                utilidadReal
         );
     }
 
