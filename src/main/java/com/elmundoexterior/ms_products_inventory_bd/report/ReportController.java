@@ -11,6 +11,7 @@ import com.elmundoexterior.ms_products_inventory_bd.report.sales.SalesSummaryDto
 import com.elmundoexterior.ms_products_inventory_bd.report.topproducts.TopProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,69 +24,88 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping("/margins")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<MarginReportDto> getMargins() {
 
         return reportService.getMargins();
     }
 
     @GetMapping("/sales-summary")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public SalesSummaryDto getSalesSummary() {
 
         return reportService.getSalesSummary();
     }
 
     @GetMapping("/top-products")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TopProductDto> getTopProducts() {
 
         return reportService.getTopProducts();
     }
 
     @GetMapping("/top-revenue-products")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TopRevenueProductDto> getTopRevenueProducts() {
 
         return reportService.getTopRevenueProducts();
     }
 
     @GetMapping("/profitability")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<ProfitabilityDto> getProfitabilityReport() {
 
         return reportService.getProfitabilityReport();
     }
 
     @GetMapping("/dashboard")
+    @PreAuthorize("hasRole('ADMIN')")
     public DashboardDto getDashboard() {
 
         return reportService.getDashboard();
     }
 
     @GetMapping("/monthly-sales")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public MonthlySalesDto getMonthlySales(
             @RequestParam Integer year,
             @RequestParam Integer month) {
 
         return reportService
-                .getMonthlySales(year, month);
+                .getMonthlySales(
+                        year,
+                        month
+                );
     }
 
     @GetMapping("/pending-invoice-sales")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public List<PendingInvoiceSaleDto> getPendingInvoiceSales(
             @RequestParam Integer year,
             @RequestParam Integer month) {
 
         return reportService
-                .getPendingInvoiceSales(year, month);
+                .getPendingInvoiceSales(
+                        year,
+                        month
+                );
     }
 
     @GetMapping("/pending-invoice-summary")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public PendingInvoiceSummaryDto getPendingInvoiceSummary(
             @RequestParam Integer year,
             @RequestParam Integer month) {
 
         return reportService
-                .getPendingInvoiceSummary(year, month);
+                .getPendingInvoiceSummary(
+                        year,
+                        month
+                );
     }
 
     @GetMapping("/pending-invoice-sales/csv")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public ResponseEntity<byte[]> exportPendingInvoiceSalesCsv(
             @RequestParam Integer year,
             @RequestParam Integer month) {
@@ -93,10 +113,12 @@ public class ReportController {
         return reportService
                 .exportPendingInvoiceSalesCsv(
                         year,
-                        month);
+                        month
+                );
     }
 
     @PostMapping("/mark-invoiced")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public Integer markAsInvoiced(
             @RequestParam Integer year,
             @RequestParam Integer month) {

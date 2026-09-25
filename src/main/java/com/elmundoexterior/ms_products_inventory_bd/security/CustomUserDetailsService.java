@@ -34,7 +34,9 @@ public class CustomUserDetailsService
                 .disabled(
                         !usuario.getEnabled()
                 )
-                .authorities("USER")
+                .roles(
+                        usuario.getRole().name()
+                )
                 .build();
     }
 }

@@ -2,11 +2,11 @@ package com.elmundoexterior.ms_products_inventory_bd.sale;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import java.util.List;
 
 @RestController
@@ -18,6 +18,7 @@ public class SaleController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public SaleResponse create(
             @RequestBody SaleCreateRequest request) {
 
@@ -25,11 +26,14 @@ public class SaleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public List<SaleResponse> getAll() {
+
         return saleService.getAll();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public SaleResponse getById(
             @PathVariable Long id) {
 
@@ -37,13 +41,16 @@ public class SaleController {
     }
 
     @GetMapping("/{id}/details")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public List<SaleDetailResponse> getDetails(
             @PathVariable Long id) {
+
         return saleService
                 .getDetails(id);
     }
 
     @GetMapping("/history")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public List<SaleResponse> getByDateRange(
             @RequestParam String from,
             @RequestParam String to) {

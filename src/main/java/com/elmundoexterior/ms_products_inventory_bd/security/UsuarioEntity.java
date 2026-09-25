@@ -21,4 +21,8 @@ public class UsuarioEntity {
     private String password;
 
     private Boolean enabled;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 }

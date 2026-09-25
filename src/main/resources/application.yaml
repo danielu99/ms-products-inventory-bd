@@ -10,6 +10,12 @@ spring:
       maximum-pool-size: 5
       minimum-idle: 1
 
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
   jpa:
     hibernate:
       ddl-auto: none
