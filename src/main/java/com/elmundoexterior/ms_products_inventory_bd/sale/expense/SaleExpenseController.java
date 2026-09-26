@@ -2,6 +2,7 @@ package com.elmundoexterior.ms_products_inventory_bd.sale.expense;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,20 +16,24 @@ public class SaleExpenseController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public SaleExpenseResponse create(
             @PathVariable Long saleId,
             @RequestBody SaleExpenseRequest request) {
 
         return service.create(
                 saleId,
-                request);
+                request
+        );
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'CONTADOR')")
     public List<SaleExpenseResponse> getBySaleId(
             @PathVariable Long saleId) {
 
         return service.getBySaleId(
-                saleId);
+                saleId
+        );
     }
 }
