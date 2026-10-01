@@ -10,6 +10,8 @@ public record ProductResponse(
 
         String nombre,
 
+        String codigoBarras,
+
         BigDecimal margenDeseado,
 
         BigDecimal precioFinal,

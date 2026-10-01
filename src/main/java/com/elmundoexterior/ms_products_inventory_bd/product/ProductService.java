@@ -35,20 +35,35 @@ public class ProductService {
 
         ProductEntity product =
                 ProductEntity.builder()
-                        .sku(request.sku())
                         .nombre(request.nombre())
                         .costoPromedio(costoReal)
-                        .margenDeseado(request.margenDeseado().divide(
-                                BigDecimal.valueOf(100),
-                                2,
-                                RoundingMode.HALF_UP))
+                        .margenDeseado(
+                                request.margenDeseado().divide(
+                                        BigDecimal.valueOf(100),
+                                        2,
+                                        RoundingMode.HALF_UP))
                         .precioFinal(request.precioFinal())
                         .stockActual(request.cantidadInicial())
                         .fechaCreacion(LocalDateTime.now())
+                        .codigoBarras(normalizeBarcode(request.codigoBarras()))
                         .build();
 
+        // Primer guardado:
+        // PostgreSQL genera el ID.
         ProductEntity savedProduct =
-                repository.save(product);
+                repository.saveAndFlush(product);
+
+        // Con el ID ya podemos generar nuestro SKU.
+        String sku =
+                String.format(
+                        "EME-%06d",
+                        savedProduct.getId());
+
+        savedProduct.setSku(sku);
+
+        // Guardamos el SKU generado.
+        savedProduct =
+                repository.save(savedProduct);
 
         PurchaseEntity purchase =
                 PurchaseEntity.builder()
@@ -63,6 +78,17 @@ public class ProductService {
         purchaseRepository.save(purchase);
 
         return map(savedProduct);
+    }
+
+    private String normalizeBarcode(
+            String codigoBarras) {
+
+        if (codigoBarras == null ||
+                codigoBarras.isBlank()) {
+            return null;
+        }
+
+        return codigoBarras.trim();
     }
 
     public List<ProductResponse> findAll() {
@@ -142,12 +168,27 @@ public class ProductService {
         return map(saved);
     }
 
+    public ProductResponse findByBarcode(
+            String codigoBarras) {
+
+        ProductEntity entity =
+                repository
+                        .findByCodigoBarras(
+                                codigoBarras.trim())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Producto no encontrado"));
+
+        return map(entity);
+    }
+
     private ProductResponse map(ProductEntity entity) {
 
         return new ProductResponse(
                 entity.getId(),
                 entity.getSku(),
                 entity.getNombre(),
+                entity.getCodigoBarras(),
                 entity.getMargenDeseado(),
                 entity.getPrecioFinal(),
                 entity.getCostoPromedio(),

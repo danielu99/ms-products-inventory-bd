@@ -19,7 +19,7 @@ public class ProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true)
+    @Column(unique = true)
     private String sku;
 
     @Column(nullable = false)
@@ -39,4 +39,7 @@ public class ProductEntity {
 
     @Column(nullable = false,updatable = false)
     private LocalDateTime fechaCreacion;
+
+    @Column(name = "codigo_barras", unique = true, length = 50)
+    private String codigoBarras;
 }
